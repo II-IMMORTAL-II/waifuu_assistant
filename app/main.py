@@ -83,29 +83,35 @@ chat_service = None
 # LIFESPAN
 # ==========================================================
 
+async def _init_services():
+    """Initialize heavy services in background so health check responds immediately."""
+    global vector_store_service, groq_service, realtime_service, chat_service
+    try:
+        logger.info("[BOOT] Initializing Vector Store...")
+        vector_store_service = VectorStoreService()
+        vector_store_service.create_vector_store()
+
+        logger.info("[BOOT] Connecting Groq AI...")
+        groq_service = GroqService(vector_store_service)
+
+        logger.info("[BOOT] Connecting Realtime Engine...")
+        realtime_service = RealtimeGroqService(vector_store_service)
+
+        logger.info("[BOOT] Launching Chat Core...")
+        chat_service = ChatService(groq_service, realtime_service)
+
+        print(CYAN + "\nJ.A.R.V.I.S ONLINE\n" + RESET)
+    except Exception as e:
+        logger.error("[BOOT] Service initialization failed: %s", e)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global vector_store_service, groq_service, realtime_service, chat_service
-
     print_title()
-    boot_progress("Initializing Vector Store...")
-    vector_store_service = VectorStoreService()
-    vector_store_service.create_vector_store()
-
-    boot_progress("Connecting Groq AI...")
-    groq_service = GroqService(vector_store_service)
-
-    boot_progress("Connecting Realtime Engine...")
-    realtime_service = RealtimeGroqService(vector_store_service)
-
-    boot_progress("Launching Chat Core...")
-    chat_service = ChatService(groq_service, realtime_service)
-
-    print(CYAN + "\nJ.A.R.V.I.S ONLINE\n" + RESET)
-
+    # Start services in background — lets health check respond immediately
+    asyncio.create_task(_init_services())
     yield
 
-    print("\nSaving sessions...")
+    logger.info("Saving sessions...")
     if chat_service:
         for sid in list(chat_service.sessions.keys()):
             chat_service.save_chat_session(sid)
