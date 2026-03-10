@@ -108,9 +108,8 @@ def _init_services():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print_title()
-    # Run heavy init in a background thread so health check responds in <1s
-    t = threading.Thread(target=_init_services, daemon=True)
-    t.start()
+    # Initialize services synchronously so health check succeeds but chat is ready
+    _init_services()
     yield
 
     logger.info("Saving sessions...")
