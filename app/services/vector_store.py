@@ -3,10 +3,18 @@ import logging
 from pathlib import Path
 from typing import List, Optional
 
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain_core.documents import Document
+logger = logging.getLogger("J.A.R.V.I.S")
+
+# Heavy ML imports — optional so the app starts even if torch/faiss crash
+_VECTOR_AVAILABLE = False
+try:
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+    from langchain_huggingface import HuggingFaceEmbeddings
+    from langchain_community.vectorstores import FAISS
+    from langchain_core.documents import Document
+    _VECTOR_AVAILABLE = True
+except Exception as e:
+    logger.warning("[VECTOR] ML imports failed (%s). Vector store disabled.", e)
 
 from config import (
     LEARNING_DATA_DIR,
@@ -23,6 +31,14 @@ logger = logging.getLogger("J.A.R.V.I.S")
 class VectorStoreService:
 
     def __init__(self):
+        if not _VECTOR_AVAILABLE:
+            logger.warning("[VECTOR] Running without vector store — ML libs unavailable.")
+            self.embeddings = None
+            self.text_splitter = None
+            self.vector_store = None
+            self._retriever_cache = {}
+            return
+
         self.embeddings = HuggingFaceEmbeddings(
             model_name=EMBEDDING_MODEL,
             model_kwargs={"device": "cpu"},
@@ -120,7 +136,10 @@ class VectorStoreService:
 
     # ---------------- CREATE VECTOR STORE ---------------- #
 
-    def create_vector_store(self) -> FAISS:
+    def create_vector_store(self):
+        if not _VECTOR_AVAILABLE:
+            logger.warning("[VECTOR] Skipping vector store creation — ML libs unavailable.")
+            return None
         learning_docs = self.load_learning_data()
         chat_docs = self.load_chat_history()
 
@@ -185,9 +204,11 @@ class VectorStoreService:
 
     def get_retriever(self, k: int = 10):
         if not self.vector_store:
-            raise RuntimeError(
-                "Vector store not initialized. Call create_vector_store() first."
-            )
+            # Return a no-op stub retriever when vector store is unavailable
+            class _NoOpRetriever:
+                def invoke(self, *a, **kw): return []
+                def get_relevant_documents(self, *a, **kw): return []
+            return _NoOpRetriever()
 
         if k not in self._retriever_cache:
             self._retriever_cache[k] = self.vector_store.as_retriever(
