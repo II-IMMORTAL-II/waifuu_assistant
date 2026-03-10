@@ -1,0 +1,29 @@
+{
+  "session_id": "66dc0028-d236-429a-82eb-15ffa5cc4e84",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hello, Jarvis."
+    },
+    {
+      "role": "assistant",
+      "content": "Hello, immortal, how can I assist you today?"
+    },
+    {
+      "role": "user",
+      "content": "What are you doing, Jarvis?"
+    },
+    {
+      "role": "assistant",
+      "content": "I'm ready to help you, immortal, and waiting for your instructions or questions."
+    },
+    {
+      "role": "user",
+      "content": "Can you tell me what price of bitcoins in India?"
+    },
+    {
+      "role": "assistant",
+      "content": "As of March 2, 2026, the price of 1 Bitcoin in India is approximately ₹6,119,880.61 INR."
+    }
+  ]
+}

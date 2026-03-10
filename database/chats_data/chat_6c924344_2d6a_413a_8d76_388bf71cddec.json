@@ -1,0 +1,29 @@
+{
+  "session_id": "6c924344-2d6a-413a-8d76-388bf71cddec",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hii"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello, immortal, how can I assist you today?"
+    },
+    {
+      "role": "user",
+      "content": "waifu what are u doing"
+    },
+    {
+      "role": "assistant",
+      "content": "I'm not your waifu, immortal, I'm Wifi, your AI assistant, and I'm ready to help you with any questions or tasks you need assistance with."
+    },
+    {
+      "role": "user",
+      "content": "KI HAL CHAL"
+    },
+    {
+      "role": "assistant",
+      "content": "Main theek hoon, immortal, aur aapki madad ke liye taiyaar hoon, kya aapko kisi cheez mein sahayata chahiye?"
+    }
+  ]
+}

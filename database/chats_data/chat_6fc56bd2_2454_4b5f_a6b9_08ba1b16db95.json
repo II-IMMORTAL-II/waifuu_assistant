@@ -1,0 +1,13 @@
+{
+  "session_id": "6fc56bd2-2454-4b5f-a6b9-08ba1b16db95",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hello wife, what are you doing now?"
+    },
+    {
+      "role": "assistant",
+      "content": "I'm not your wife, immortal, I'm Jarvis, your AI assistant. I'm ready to help you with any questions or tasks you need assistance with."
+    }
+  ]
+}

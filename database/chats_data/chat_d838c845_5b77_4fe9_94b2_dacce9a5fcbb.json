@@ -1,0 +1,13 @@
+{
+  "session_id": "d838c845-5b77-4fe9-94b2-dacce9a5fcbb",
+  "messages": [
+    {
+      "role": "user",
+      "content": "What can you do?"
+    },
+    {
+      "role": "assistant",
+      "content": "I can answer your questions, open apps or websites like your YouTube channel, generate images, play music, write content, and search for information. I'll do it for you, just let me know what you need, immortal."
+    }
+  ]
+}

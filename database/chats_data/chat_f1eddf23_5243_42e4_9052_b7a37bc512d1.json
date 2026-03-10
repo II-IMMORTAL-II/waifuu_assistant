@@ -1,0 +1,13 @@
+{
+  "session_id": "f1eddf23-5243-42e4-9052-b7a37bc512d1",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Play some music"
+    },
+    {
+      "role": "assistant",
+      "content": "I'll play some music for you, immortal. You should hear it now."
+    }
+  ]
+}
