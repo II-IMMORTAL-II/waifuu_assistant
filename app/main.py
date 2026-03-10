@@ -5,6 +5,7 @@ import base64
 import asyncio
 import re
 import sys
+import threading
 from pathlib import Path
 from contextlib import asynccontextmanager
 from concurrent.futures import ThreadPoolExecutor
@@ -83,8 +84,8 @@ chat_service = None
 # LIFESPAN
 # ==========================================================
 
-async def _init_services():
-    """Initialize heavy services in background so health check responds immediately."""
+def _init_services():
+    """Run in a background thread — keeps event loop free so health check responds immediately."""
     global vector_store_service, groq_service, realtime_service, chat_service
     try:
         logger.info("[BOOT] Initializing Vector Store...")
@@ -107,8 +108,9 @@ async def _init_services():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print_title()
-    # Start services in background — lets health check respond immediately
-    asyncio.create_task(_init_services())
+    # Run heavy init in a background thread so health check responds in <1s
+    t = threading.Thread(target=_init_services, daemon=True)
+    t.start()
     yield
 
     logger.info("Saving sessions...")
